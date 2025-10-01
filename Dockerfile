@@ -5,7 +5,6 @@ FROM python:3.10-slim
 WORKDIR /app
 
 # ------------------- Copy requirements file -------------------
-# (Create requirements.txt with all needed packages)
 COPY requirements.txt .
 
 # ------------------- Install dependencies -------------------
@@ -15,13 +14,12 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
 
 # ------------------- Expose Streamlit default port -------------------
-EXPOSE 8501
+EXPOSE 8080
 
 # ------------------- Set environment variables for Streamlit -------------------
 ENV STREAMLIT_SERVER_ENABLECORS=false
 ENV STREAMLIT_SERVER_HEADLESS=true
-ENV STREAMLIT_SERVER_PORT=8501
 
 # ------------------- Run Streamlit app -------------------
-CMD ["streamlit", "run", "app.py"]
-
+# Cloud Run sets $PORT automatically, so we bind to it
+CMD ["sh", "-c", "streamlit run app.py --server.port=$PORT --server.headless=true --server.enableCORS=false"]
